@@ -1,14 +1,14 @@
 NAME
-  ctd
+ctd
   
 SYNOPSIS
-  A simple linux console program used to calculate distance between two dates. Also includes a countdown functionality.
+A simple linux console program used to calculate distance between two dates. Also includes a countdown functionality.
   
 INSTALL
   todo
   
 URL
-  https://github.com/Andrei-Mardale/ctd/
+https://github.com/Andrei-Mardale/ctd/
   
 DESCRIPTION
   ctd date1 date2 - simple distance between two dates (todo)
