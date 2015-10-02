@@ -1,5 +1,5 @@
-NAME
-  ctd
+NAME\n
+  ctd\n\n
   
 SYNOPSIS
   A simple linux console program used to calculate distance between two dates. Also includes a countdown functionality.
