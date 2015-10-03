@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <sys/stat.h>
+#include <unistd.h>
 #include "date.h"
+
 
 #ifndef _TSTATE_
 #define _TSTATE_
 
-#define STOREPATH "~/.ctd/date"
-#define FOLDERPATH "~/.ctd"
+#define CLEARLINE "                                   \r"
 
 //function that will return pointer to the next function that shall be executed
 struct state;

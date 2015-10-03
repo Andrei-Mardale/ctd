@@ -6,32 +6,29 @@ void checkArgc (State *s);
 //prints difference between stored date and present
 void printDiff (State *s);
 
-//checks if argv[1] is "-c"
+//checks if argv[1] is "-c" or "-s"
 void checkArgv1 (State *s);
 
-//checks if argument count is 3, when first argument is NOT -c
+//checks if argument when first argument is NOT special parameter
 void checkArgc3 (State *s);
 
-//check if argument count is 3, when first argument is -c
+//check if argument count when first argument is -c
 void checkArgc3c (State *s);
 
-//check if arugment count is 2 when first argument is NOT -c
-void checkArgc2 (State *s);
-
-//check if arugment count is 2 when first argument is -c
-void checkArgc2c (State *s);
+//check if argument count when first argument is -s
+void checkArgc3s (State *s);
 
 //store given date
-void storeDate (State *s); //TODO
+void storeDate (State *s);
 
 //prints differnce between the 2 given dates
-void print2Diff (State *s); //TODO
+void print2Diff (State *s);
 
 //prints a live countdown relative to stored date
-void printCountdownStored (State *s); //TODO
+void printCountdownStored (State *s);
 
 //prints a live countdown relative to given date
-void printCountdown (State *s); //TODO
+void printCountdown (State *s);
 
 //this simulates the begaviour of tha state machine
 void runStateMachine (int argc, char *argv[]) {
@@ -68,7 +65,7 @@ void checkArgc (State *s) {
 
 //prints date difference to output
 void printDateDiff (TDateDiff *diff) {
-	printf("%d w %d d %d h %d m %d s\n",
+	printf("%d w %d d %d h %d m %d s",
 		diff->week,
 		diff->day,
 		diff->hour,
@@ -81,72 +78,64 @@ void printDiff (State *s) {
 	s->next = NULL;
 	FILE *in = fopen(makeFilePath(), "rb");
 	if (in == NULL) {
-		printf("No date stored. Try to store one by calling \"ctd [date]\"\n");
+		printf("No date stored. Try to store one by calling \"ctd -s [date]\"\n");
 		return NULL;
 	}
 	
 	double jstored;
 	fread(&jstored, sizeof(double), 1, in); 
+	fclose(in);
 	
-	TDate *present = currentDate();
+	TDate *present = currentDate(NULL);
 	
 	double jpresent = toJulian(present);
 	
 	TDateDiff *diff = tdiff(jstored, jpresent);
 	
 	printDateDiff(diff);
+	printf("\n");
 	
 	free(present);
 	free(diff);
-	fclose(in);
+
 }
 
-//checks if argv[1] is "-c"
 void checkArgv1 (State *s) {
 	if (!strcmp(s->argv[1], "-c")) {
 		s->next = &checkArgc3c;
+	} else if (!strcmp(s->argv[1], "-s")) {
+		s->next = &checkArgc3s;
 	} else {
 		s->next = &checkArgc3;
 	}
 }
 
-//checks if argument count is 3, when first argument is NOT -c
 void checkArgc3 (State *s) {
 	if (s->argc == 3) {
 		s->next = &print2Diff;
 	} else {	
-		s->next = &checkArgc2;
+		s->next = NULL;
 	}
 }
 
-//check if argument count is 3, when first argument is -c
 void checkArgc3c (State *s) {
 	if (s->argc == 3) {
 		s->next = &printCountdown;
-	} else {
-		s->next = &checkArgc2c;
-	}
-}
-
-//check if arugment count is 2 when first argument is NOT -c
-void checkArgc2 (State *s) {
-	if (s->argc == 2) {
-		s->next = &storeDate;
-	} else {
-		printf("Incorrect argument number\n");
-		s->next = NULL;
-	}
-}
-
-//check if arugment count is 2 when first argument is -c
-void checkArgc2c (State *s) {
-	if (s->argc == 2) {
+	} else if (s->argc == 2) {
 		s->next = &printCountdownStored;
 	} else {
-		printf("Incorrect argument number\n");
 		s->next = NULL;
 	}
 }
+
+void checkArgc3s (State *s) {
+	if (s->argc == 3) {
+		s->next = &storeDate;
+	} else {
+		s->next = NULL;
+	}
+}
+	
 
 //store given date
 void storeDate (State *s) {
@@ -162,7 +151,7 @@ void storeDate (State *s) {
 		}
 	}
 	
-	TDate *date = parse(s->argv[1]);
+	TDate *date = parse(s->argv[2]);
 	if (!date) {
 		printf("Could not parse date. Check formatting\n");
 		return;
@@ -178,8 +167,8 @@ void storeDate (State *s) {
 	double jvalue = toJulian(date);
 	fwrite(&jvalue, sizeof(double), 1, out);
 	
-	free(date);
 	fclose(out);
+	free(date);	
 }
 	
 	
@@ -198,20 +187,63 @@ void print2Diff (State *s) {
 	TDateDiff *diff = tdiff(toJulian(date2), toJulian(date1));
 	
 	printDateDiff(diff);
+	printf("\n");
 	
 	free(diff);
 	free(date1);
 	free(date2);
 }
 
+//prints difference between jvalue2 and jvalue1 every second
+void countdown (double jvalue1, double jvalue2) {
+	TDateDiff *diff = tdiff(jvalue2, jvalue1);
+	while (
+		diff->second || 
+		diff->minute || 
+		diff->hour || 
+		diff->day || 
+		diff->week) {
+		
+		printf(CLEARLINE);
+		printDateDiff(diff);		
+		fflush(stdout);
+		decreaseDiff(diff);
+		sleep(1);
+	}
+}
+		
+		
 //prints a live countdown relative to stored date
 void printCountdownStored (State *s) {
 	s->next = NULL;
-	printf("TODO\n"); //TODO
+	
+	FILE *in = fopen(makeFilePath(), "rb");
+	if (!in) {
+		printf("No date stored. Try to store one by calling \"ctd -s [date]\"\n");
+		return;
+	}
+	
+	double jdate;
+	fread(&jdate, sizeof(double), 1, in);
+	fclose(in); 
+	
+	TDate *now = currentDate(NULL);
+	double jnow = toJulian(now);
+	
+	countdown (jnow, jdate);	
 }
 
 //prints a live countdown relative to given date
 void printCountdown (State *s) {
 	s->next = NULL;
-	printf("TODO\n");
-} //TODO
+	
+	TDate *date = parse(s->argv[2]);
+	if (!date) {
+		printf("Could not parse date. Check formatting\n");
+		return;
+	}
+	
+	TDate *now = currentDate(NULL);
+	
+	countdown (toJulian(now), toJulian(date));	
+}

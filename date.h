@@ -30,12 +30,15 @@ typedef struct {
 TDate * parse (char *s);
 
 //gets current system date
-TDate * currentDate ();
+TDate * currentDate (TDate *update);
 
 //converts date to julian calendar value
 double toJulian (TDate *date);
 
 //calculates jv1 - jv2 and returns TDateDiff type
 TDateDiff * tdiff (double jv1, double jv2);
+
+//decrease difference by one second
+void decreaseDiff (TDateDiff *diff);
 
 #endif

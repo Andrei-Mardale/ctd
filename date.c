@@ -140,7 +140,7 @@ TDate * parse (char *s) {
 	return date;
 }
 
-TDate * currentDate () {
+TDate * currentDate (TDate *update) {
 	time_t rawtime; //no of second
 	struct tm *actualTime; //structure from which TDate will be built
 	
@@ -150,8 +150,12 @@ TDate * currentDate () {
 	//get local time from 
 	actualTime = localtime(&rawtime);
 	
-	TDate *present = (TDate *) malloc(sizeof(TDate));
-	if (!present) return NULL;
+	//if adress is given then update it, else create new TDate
+	TDate *present = update;
+	if (!present) {
+		present = (TDate *) malloc(sizeof(TDate));
+		if (!present) return NULL;
+	} 
 	
 	//convert values
 	present->year = 1900 + actualTime->tm_year;
@@ -206,6 +210,30 @@ TDateDiff * tdiff (double jv1, double jv2) {
 	diff->second %= 60;
 	
 	return diff;
+}
+
+void decreaseDiff (TDateDiff *diff) {
+	if (diff->second != 0) {
+		--diff->second;
+	} else if (diff->minute != 0) {
+		--diff->minute;
+		diff->second = 59;
+	} else if (diff->hour != 0) {
+		--diff->hour;
+		diff->minute = 59;
+		diff->second = 59;
+	} else if (diff->day != 0) {
+		--diff->day;
+		diff->hour = 23;
+		diff->minute = 59;
+		diff->second = 59;
+	} else if (diff->week != 0) {
+		--diff->week;
+		diff->day = 6;
+		diff->hour = 23;
+		diff->minute = 59;
+		diff->second = 59;
+	}
 }
 			
 	
