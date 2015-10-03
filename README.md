@@ -11,8 +11,9 @@ URL
   https://github.com/Andrei-Mardale/ctd/
   
 DESCRIPTION  
-  ctd date1 date2 - simple distance between two dates (todo)  
-  ctd date1 - if no date is stored store this date. Else calculate distance between this date and stored one (todo)  
-  ctd -c (date) - live countdown from present to stored (or given) date. (todo)  
+  ctd date1 date2 - simple distance between two dates  
+  ctd date1 - distance from present to stored date if there is one stored    
+  ctd -c (date) - live countdown from present to stored (or given) date  
+  ctd -s date - store date  
   See man for details. (todo)
   
