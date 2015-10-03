@@ -151,12 +151,12 @@ TDate * currentDate () {
 	actualTime = localtime(&rawtime);
 	
 	TDate *present = (TDate *) malloc(sizeof(TDate));
-	if (!preset) return NULL;
+	if (!present) return NULL;
 	
 	//convert values
 	present->year = 1900 + actualTime->tm_year;
-	present->month = 1 + actualTime->tm_month;
-	present->day = actualTime->tm_day;
+	present->month = 1 + actualTime->tm_mon;
+	present->day = actualTime->tm_mday;
 	present->hour = actualTime->tm_hour;
 	present->minute = actualTime->tm_min;
 	present->second = actualTime->tm_sec;

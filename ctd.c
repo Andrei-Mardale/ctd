@@ -1,9 +1,6 @@
-#include <stdio.h>
-#include "date.h"
-#include <time.h>
+#include "fstate.h"
 
 int main (int argc, char *argv[]) {
-	TDate *date = parse(argv[1]);
-
+	runStateMachine(argc, argv);	
 	return 0;
 }
