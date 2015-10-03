@@ -5,7 +5,8 @@ SYNOPSIS
 A simple linux console program used to calculate distance between two dates. Also includes a countdown functionality.
   
 INSTALL  
-  todo
+  make install  
+  make unistall - for removal  
   
 URL  
   https://github.com/Andrei-Mardale/ctd/
