@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include "date.h"
+#include <time.h>
 
 int main (int argc, char *argv[]) {
-	date = parse(argv[1]);
+	TDate *date = parse(argv[1]);
+
 	return 0;
 }

@@ -5,22 +5,24 @@
 	13 - sometihg wrong */
 static unsigned char retrieveMonth (char *s) {
 	//make everything lower case
-	for (char *aux = s; aux != NULL; ++aux) {
-		*aux -= ULDIFF;
+	for (char *aux = s; *aux != '\0'; ++aux) {
+		if (!(*aux >= 'a' && *aux <= 'z')) {
+			*aux += ULDIFF;
+		}
 	}
 	
-	if (!strcmp(s, "january") return 1;
-	if (!strcmp(s, "february") return 2;
-	if (!strcmp(s, "march") return 3;
-	if (!strcmp(s, "april") return 4;
-	if (!strcmp(s, "may") return 5;
-	if (!strcmp(s, "june") return 6;
-	if (!strcmp(s, "july") return 7;
-	if (!strcmp(s, "august") return 8;
-	if (!strcmp(s, "september") return 9;
-	if (!strcmp(s, "october") return 10;
-	if (!strcmp(s, "novemer") return 11;
-	if (!strcmp(s, "december") return 12;
+	if (!strcmp(s, "january")) return 1;
+	if (!strcmp(s, "february")) return 2;
+	if (!strcmp(s, "march")) return 3;
+	if (!strcmp(s, "april")) return 4;
+	if (!strcmp(s, "may")) return 5;
+	if (!strcmp(s, "june")) return 6;
+	if (!strcmp(s, "july")) return 7;
+	if (!strcmp(s, "august")) return 8;
+	if (!strcmp(s, "september")) return 9;
+	if (!strcmp(s, "october")) return 10;
+	if (!strcmp(s, "novemer")) return 11;
+	if (!strcmp(s, "december")) return 12;
 	
 	return 13;
 }
@@ -39,8 +41,8 @@ static int checkDate (char *s, TDate *date) {
 	
 	//if month is given by name retrieve it
 	//else retrieve number
-	if (*s < '1' || *s > '9') {
-		date->month = retrievMonth(s);
+	if (*s < '0' || *s > '9') {
+		date->month = retrieveMonth(s);
 	} else {
 		date->month = (unsigned char) atoi(s);
 	}
@@ -64,19 +66,19 @@ static int checkHour (char *s, TDate *date) {
 	date->hour = (unsigned char) atoi(aux);
 	
 	aux = strtok(NULL, ":");
-	if (!aux) return 1:
+	if (!aux) return 1;
 	
-	date->minutes = (unsigned char) atoi(aux);
+	date->minute = (unsigned char) atoi(aux);
 	
 	aux = strtok(NULL, ":");
 	if (!aux) return 1;
 	
-	date->seconds = (unsigned char) atoi(aux);
+	date->second = (unsigned char) atoi(aux);
 	
 	return 0;
 }
 
-static int abs(x) {
+static int absVal (int x) {
 	return (x < 0) ? -x : x;
 }
 
@@ -86,7 +88,7 @@ static int abs(x) {
 checks if given date is valid */
 static int checkLimits (TDate *date) {
 	if (date->hour > 23) return 1;
-	if (date->minutes > 59 || date->seconds > 59) return 1;
+	if (date->minute > 59 || date->second > 59) return 1;
 
 	if (date->month < 1 || date->month > 12) return 1;
 	
@@ -95,7 +97,7 @@ static int checkLimits (TDate *date) {
 	} else if (date->day > 30 && (date->month % 2) == 0) {
 		return 1;
 	} else if (date->month == 2) {
-		if (abs(date->year) % 4 == 1 && date->day > 29) {
+		if (absVal(date->year) % 4 == 1 && date->day > 29) {
 			return 1;
 		} else if (date->day > 28) {
 			return 1;
@@ -137,7 +139,74 @@ TDate * parse (char *s) {
 	
 	return date;
 }
+
+TDate * currentDate () {
+	time_t rawtime; //no of second
+	struct tm *actualTime; //structure from which TDate will be built
 	
+	//get raw time - no of second from 1/01/1970 (most probably)
+	time(&rawtime);
+	
+	//get local time from 
+	actualTime = localtime(&rawtime);
+	
+	TDate *present = (TDate *) malloc(sizeof(TDate));
+	if (!preset) return NULL;
+	
+	//convert values
+	present->year = 1900 + actualTime->tm_year;
+	present->month = 1 + actualTime->tm_month;
+	present->day = actualTime->tm_day;
+	present->hour = actualTime->tm_hour;
+	present->minute = actualTime->tm_min;
+	present->second = actualTime->tm_sec;
+	
+	return present;
+}
+
+double toJulian (TDate *date) {
+	int a = (14 - date->month) / 12;
+	int y = date->year + 4800 + a;
+	int m = date->month + 12 * a - 3;
+	
+	double jvalue = date->day + (153 * m + 2) / 5;
+	jvalue += 365 * y + y / 4 - y / 100 + y / 400 - 32045;
+	jvalue += ((double) date->hour - 2) / 24;
+	jvalue += (double) date->minute / 1440;
+	jvalue += (double) date->second / 86400;
+	
+	return jvalue;
+}
+
+TDateDiff * tdiff (double jv1, double jv2) {
+	TDateDiff * diff = calloc(1, sizeof(TDateDiff));
+	if (!diff) return NULL;
+	
+	//calculate difference
+	jv1 -= jv2;
+	
+	//retrive number of second from fraction part
+	diff->second = (int) ((jv1 - (int) jv1) * 86400);
+	
+	//number of days
+	diff->day = (int) jv1;
+	
+	//calculate number of weeks and keep number of remaining days
+	diff->week = diff->day / 7;
+	diff->day %= 7;	
+	
+	//find number of hours
+	diff->hour = diff->second / 3600;
+	
+	//eliminate hours, and keep remaining second, from that find minute
+	diff->second %= 3600;
+	diff->minute = diff->second / 60;
+	
+	//eliminate minute and then keep remaining second
+	diff->second %= 60;
+	
+	return diff;
+}
 			
 	
 	
