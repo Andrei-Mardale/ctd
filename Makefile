@@ -2,6 +2,14 @@ CC = gcc -c
 LD = gcc
 CFLAGS = -std=c99 -Wall -Wextra -Wpedantic -g
 
+install:
+	make ctd
+	sudo mv ctd /usr/bin/ctd
+	make clean
+	
+uninstall:
+	sudo rm /usr/bin/ctd
+
 ctd: ctd.o date.o fstate.o
 	$(LD) $(CFLAGS) $^ -o $@
 	
