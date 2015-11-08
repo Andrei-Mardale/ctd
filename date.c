@@ -170,7 +170,7 @@ TDate * currentDate (TDate *update) {
 
 double toJulian (TDate *date) {
 	int a = (14 - date->month) / 12;
-	int y = date->year + 4800 + a;
+	int y = date->year + 4800 - a;
 	int m = date->month + 12 * a - 3;
 	
 	double jvalue = date->day + (153 * m + 2) / 5;

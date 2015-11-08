@@ -79,7 +79,7 @@ void printDiff (State *s) {
 	FILE *in = fopen(makeFilePath(), "rb");
 	if (in == NULL) {
 		printf("No date stored. Try to store one by calling \"ctd -s [date]\"\n");
-		return NULL;
+		return;
 	}
 	
 	double jstored;

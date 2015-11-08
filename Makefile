@@ -8,7 +8,11 @@ install:
 	make clean
 	
 uninstall:
-	sudo rm /usr/bin/ctd
+	sudo rm -f /usr/bin/ctd
+	rm -f ~/.ctd/date
+	rmdir -f ~/.ctd
+
+build: ctd
 
 ctd: ctd.o date.o fstate.o
 	$(LD) $(CFLAGS) $^ -o $@
