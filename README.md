@@ -13,7 +13,7 @@ URL
   
 DESCRIPTION  
   ctd date1 date2 - simple distance between two dates  
-  ctd date1 - distance from present to stored date if there is one stored    
+  ctd distance from present to stored date if there is one stored    
   ctd -c (date) - live countdown from present to stored (or given) date  
   ctd -s date - store date  
   Date must be in folowing format hour:min:sec/day/month/year  
