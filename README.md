@@ -1,17 +1,18 @@
-NAME  
+#NAME  
   ctd
   
-SYNOPSIS  
-A simple linux console program used to calculate distance between two dates. Also includes a countdown functionality.
+#SYNOPSIS 
+
+A simple Linux console program used to calculate the distance between two dates. Also includes a countdown functionality.
   
-INSTALL  
+#INSTALL  
   make install  
-  make unistall - for removal  
+  make uninstall - for removal  
   
-URL  
+#URL  
   https://github.com/Andrei-Mardale/ctd/
   
-DESCRIPTION  
+#DESCRIPTION  
   ctd date1 date2 - simple distance between two dates  
   ctd distance from present to stored date if there is one stored    
   ctd -c (date) - live countdown from present to stored (or given) date  
